@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Privacy Policy – Hydra Water Tracker</title>
+<meta name="description" content="Privacy Policy for Hydra Water Tracker. Your data stays on your device.">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg1:#0f2027;--bg2:#203a43;--bg3:#2c5364;
+  --accent:#4fc3f7;--accent3:#7c4dff;
+  --text:#e8f4fd;--text2:rgba(232,244,253,0.65);
+  --card:rgba(255,255,255,0.07);--border:rgba(255,255,255,0.12);
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;color:var(--text);background:linear-gradient(135deg,var(--bg1) 0%,var(--bg2) 50%,var(--bg3) 100%);background-attachment:fixed;min-height:100vh;overflow-x:hidden}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* TOP NAV */
+.top-nav{position:fixed;top:0;left:0;right:0;z-index:999;display:flex;justify-content:center;padding:14px 20px;background:rgba(10,22,35,0.92);border-bottom:1px solid var(--border)}
+.top-nav-inner{display:flex;gap:20px;align-items:center}
+.top-nav a{font-size:.82rem;color:var(--text2);font-weight:500;transition:color .2s}
+.top-nav a:hover{color:var(--accent);text-decoration:none}
+.top-nav .nav-logo{font-family:'Syne',sans-serif;font-weight:800;color:#fff;font-size:.95rem}
+
+/* HERO */
+.pp-hero{text-align:center;padding:110px 20px 50px;position:relative}
+.pp-hero::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:600px;height:300px;background:radial-gradient(ellipse,rgba(79,195,247,0.1) 0%,transparent 70%);pointer-events:none}
+.badge{display:inline-block;padding:6px 18px;border-radius:50px;background:rgba(79,195,247,0.12);border:1px solid rgba(79,195,247,0.3);font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:20px}
+h1{font-family:'Syne',sans-serif;font-size:clamp(2rem,5vw,3rem);font-weight:800;line-height:1.1;margin-bottom:16px;background:linear-gradient(135deg,#fff 0%,var(--accent) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.subtitle{font-size:1rem;color:var(--text2);max-width:500px;margin:0 auto 30px;line-height:1.6}
+.meta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;font-size:.78rem;color:var(--text2)}
+.meta span{padding:6px 14px;border-radius:50px;background:var(--card);border:1px solid var(--border)}
+
+/* CONTENT */
+.pp-content{max-width:800px;margin:0 auto;padding:0 20px 80px}
+
+.pp-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px 32px;margin-bottom:20px;position:relative;overflow:hidden;opacity:0;transform:translateY(24px);transition:opacity .5s ease,transform .5s ease}
+.pp-card.visible{opacity:1;transform:translateY(0)}
+.pp-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0;transition:opacity .3s}
+.pp-card:hover::before{opacity:1}
+
+.card-header{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+.card-icon{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,rgba(79,195,247,0.2),rgba(124,77,255,0.2));border:1px solid rgba(79,195,247,0.2);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+.card-title{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;color:#fff}
+.card-num{font-size:.7rem;color:var(--accent);font-weight:600;display:block;margin-bottom:2px}
+p{font-size:.9rem;color:var(--text2);line-height:1.75;margin-bottom:12px}
+p:last-child{margin-bottom:0}
+ul{list-style:none;padding:0;margin:10px 0}
+ul li{font-size:.88rem;color:var(--text2);line-height:1.6;padding:7px 0 7px 22px;position:relative;border-bottom:1px solid rgba(255,255,255,0.04)}
+ul li:last-child{border-bottom:none}
+ul li::before{content:'💧';position:absolute;left:0;top:7px;font-size:.75rem}
+strong{color:var(--text);font-weight:600}
+code{color:var(--accent);background:rgba(79,195,247,0.1);padding:2px 7px;border-radius:4px;font-size:.85rem}
+
+.highlight{background:linear-gradient(135deg,rgba(79,195,247,0.08),rgba(124,77,255,0.08));border:1px solid rgba(79,195,247,0.2);border-radius:14px;padding:16px 20px;margin:14px 0;font-size:.88rem;color:var(--text);line-height:1.6}
+.highlight strong{color:var(--accent)}
+
+.toc{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px 28px;margin-bottom:28px}
+.toc h3{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;margin-bottom:14px}
+.toc ol{list-style:none;padding:0;columns:2;gap:20px}
+.toc ol li{padding:4px 0;border-bottom:none}
+.toc ol li::before{display:none}
+.toc ol li a{font-size:.83rem;color:var(--text2);text-decoration:none;transition:color .2s;display:flex;align-items:center;gap:6px}
+.toc ol li a:hover{color:var(--accent)}
+.toc ol li a::before{content:'→';color:var(--accent);font-size:.7rem}
+
+.contact-card{text-align:center;padding:40px 20px;background:linear-gradient(135deg,rgba(79,195,247,0.08),rgba(124,77,255,0.08));border:1px solid rgba(79,195,247,0.2);border-radius:20px;margin-top:30px}
+.contact-card h3{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:700;margin-bottom:10px;color:#fff}
+.contact-card p{font-size:.88rem;color:var(--text2);margin-bottom:20px}
+.btn{display:inline-block;padding:12px 28px;border-radius:50px;background:linear-gradient(135deg,var(--accent),var(--accent3));color:#fff;font-weight:700;font-family:'Syne',sans-serif;font-size:.9rem;text-decoration:none;transition:transform .2s,box-shadow .2s;box-shadow:0 6px 24px rgba(79,195,247,0.3)}
+.btn:hover{transform:scale(1.04);box-shadow:0 10px 32px rgba(79,195,247,0.5);text-decoration:none}
+
+footer{text-align:center;padding:28px 20px;border-top:1px solid var(--border);font-size:.75rem;color:var(--text2)}
+footer a{color:var(--accent)}
+
+@media(max-width:600px){.pp-card{padding:20px 18px}.toc ol{columns:1}}
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <div class="top-nav-inner">
+    <a href="index.html" class="nav-logo">💧 Hydra</a>
+    <a href="index.html">Home</a>
+    <a href="faq.html">FAQ</a>
+    <a href="privacy.html" style="color:var(--accent)">Privacy</a>
+  </div>
+</nav>
+
+<div class="pp-hero">
+  <div class="badge">💧 Hydra Water Tracker</div>
+  <h1>Privacy Policy</h1>
+  <p class="subtitle">We believe your data is yours. Here's exactly what we collect, what we don't, and how we protect you.</p>
+  <div class="meta">
+    <span>📅 Last Updated: February 25, 2026</span>
+    <span>✅ GDPR Friendly</span>
+    <span>🔒 No Server Collection</span>
+  </div>
+</div>
+
+<div class="pp-content">
+
+  <div class="toc pp-card">
+    <h3>📋 Table of Contents</h3>
+    <ol>
+      <li><a href="#s1">Information We Collect</a></li>
+      <li><a href="#s2">How We Use Data</a></li>
+      <li><a href="#s3">Data Storage</a></li>
+      <li><a href="#s4">Notifications</a></li>
+      <li><a href="#s5">Third Party Services</a></li>
+      <li><a href="#s6">Your Rights</a></li>
+      <li><a href="#s7">Children's Privacy</a></li>
+      <li><a href="#s8">Policy Changes</a></li>
+      <li><a href="#s9">Contact Us</a></li>
+    </ol>
+  </div>
+
+  <div class="highlight pp-card">
+    <strong>🔒 The Short Version:</strong> Hydra stores ALL your data <strong>locally on your own device</strong> using browser localStorage. We do NOT collect, transmit, or store any personal data on our servers. We have no servers. Your data never leaves your browser.
+  </div>
+
+  <div class="pp-card" id="s1">
+    <div class="card-header"><div class="card-icon">📊</div><div><span class="card-num">Section 1</span><div class="card-title">Information We Collect</div></div></div>
+    <p>Hydra is a <strong>client-side only</strong> application. All data processing happens in your browser. We store the following <strong>locally on your device only:</strong></p>
+    <ul>
+      <li><strong>Daily Water Intake</strong> — Amount of water you log each day (ml)</li>
+      <li><strong>Hydration Goal</strong> — Your personal daily water goal</li>
+      <li><strong>Sip History</strong> — Timestamps of when you logged water today</li>
+      <li><strong>7-Day History</strong> — Past week's intake for analytics</li>
+      <li><strong>Profile Info</strong> — Gender, weight, height (used only for goal calculation)</li>
+      <li><strong>Reminder Settings</strong> — Times and days for reminders</li>
+      <li><strong>DND Preferences</strong> — Do Not Disturb time settings</li>
+    </ul>
+    <div class="highlight"><strong>What we do NOT collect:</strong> Name, email, phone, IP address, location, device ID, or any personally identifiable information.</div>
+  </div>
+
+  <div class="pp-card" id="s2">
+    <div class="card-header"><div class="card-icon">⚙️</div><div><span class="card-num">Section 2</span><div class="card-title">How We Use Your Data</div></div></div>
+    <p>All data is used <strong>solely to provide app functionality</strong> within your browser:</p>
+    <ul>
+      <li>Display your current daily water intake and progress ring</li>
+      <li>Calculate remaining water goal for the day</li>
+      <li>Show weekly analytics and charts</li>
+      <li>Calculate personalized hydration goals from your profile</li>
+      <li>Fire reminder notifications at your chosen times</li>
+      <li>Persist your data between browser sessions</li>
+    </ul>
+    <p>Your data is <strong>never used for advertising, analytics reporting, or any commercial purpose.</strong></p>
+  </div>
+
+  <div class="pp-card" id="s3">
+    <div class="card-header"><div class="card-icon">💾</div><div><span class="card-num">Section 3</span><div class="card-title">Data Storage & Security</div></div></div>
+    <p>Hydra uses your browser's <strong>localStorage API</strong>. This means:</p>
+    <ul>
+      <li>Data stored <strong>only on your device</strong>, never transmitted</li>
+      <li>Stored under keys: <code>hydra_d</code>, <code>hydra_h</code>, <code>hydra_p</code>, <code>hydra_r</code></li>
+      <li>Only last <strong>30 days</strong> of history is kept</li>
+      <li>Clearing browser data will erase all Hydra data</li>
+    </ul>
+    <div class="highlight"><strong>To delete all data:</strong> Browser Settings → Privacy → Clear Browsing Data → Cookies and Site Data</div>
+  </div>
+
+  <div class="pp-card" id="s4">
+    <div class="card-header"><div class="card-icon">🔔</div><div><span class="card-num">Section 4</span><div class="card-title">Browser Notifications</div></div></div>
+    <ul>
+      <li>Notifications are <strong>entirely optional</strong></li>
+      <li>Permission only requested when you click "Enable Notifications"</li>
+      <li>Generated <strong>locally by your browser</strong> — no external push service</li>
+      <li>You can revoke permission any time from browser settings</li>
+      <li>No notification data is sent to any server</li>
+    </ul>
+  </div>
+
+  <div class="pp-card" id="s5">
+    <div class="card-header"><div class="card-icon">🌐</div><div><span class="card-num">Section 5</span><div class="card-title">Third Party Services</div></div></div>
+    <ul>
+      <li><strong>Google Fonts</strong> — Loads fonts from <code>fonts.googleapis.com</code>. Google may log this per their privacy policy. No personal app data is shared.</li>
+    </ul>
+    <p>We use <strong>no analytics, no advertising, no tracking scripts</strong> of any kind.</p>
+  </div>
+
+  <div class="pp-card" id="s6">
+    <div class="card-header"><div class="card-icon">⚖️</div><div><span class="card-num">Section 6</span><div class="card-title">Your Rights (GDPR)</div></div></div>
+    <ul>
+      <li><strong>Access</strong> — DevTools → Application → localStorage to see your data</li>
+      <li><strong>Delete</strong> — Clear browser localStorage to remove all data</li>
+      <li><strong>Export</strong> — Use "Download CSV Report" in the app</li>
+      <li><strong>Rectify</strong> — Edit profile and goals directly in the app</li>
+      <li><strong>Withdraw</strong> — Revoke notification permission in browser settings</li>
+    </ul>
+  </div>
+
+  <div class="pp-card" id="s7">
+    <div class="card-header"><div class="card-icon">👶</div><div><span class="card-num">Section 7</span><div class="card-title">Children's Privacy</div></div></div>
+    <p>Since we collect <strong>no personal information</strong> on any servers, there are no special concerns under COPPA or similar regulations. The app stores only anonymous health tracking data locally on the user's device.</p>
+  </div>
+
+  <div class="pp-card" id="s8">
+    <div class="card-header"><div class="card-icon">📝</div><div><span class="card-num">Section 8</span><div class="card-title">Changes to This Policy</div></div></div>
+    <p>When we update this policy, the "Last Updated" date will be revised. Continued use of the app after changes constitutes acceptance of the updated policy.</p>
+  </div>
+
+  <div class="contact-card pp-card" id="s9">
+    <h3>📬 Contact Us</h3>
+    <p>Questions about this Privacy Policy? We'd love to hear from you.</p>
+    <a href="mailto:skttech786@gmail.com" class="btn">✉️ skttech786@gmail.com</a>
+    <p style="margin-top:14px;font-size:.78rem">We respond to all privacy inquiries within 48 hours.</p>
+  </div>
+
+  <footer>
+    <p>© 2026 Hydra Water Tracker · <a href="index.html">Home</a> · <a href="faq.html">FAQ</a> · <a href="privacy.html">Privacy Policy</a></p>
+    <p style="margin-top:6px">Built with 💙 · Your data stays on your device, always.</p>
+  </footer>
+
+</div>
+
+<script>
+const io=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target)}})},{threshold:.1});
+document.querySelectorAll('.pp-card').forEach((c,i)=>{c.style.transitionDelay=(i*.06)+'s';io.observe(c)});
+document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',function(e){e.preventDefault();const t=document.querySelector(this.getAttribute('href'));if(t)t.scrollIntoView({behavior:'smooth'})})});
+</script>
+</body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FAQ – Hydra Water Tracker</title>
+<meta name="description" content="Frequently asked questions about Hydra Water Tracker.">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg1:#0f2027;--bg2:#203a43;--bg3:#2c5364;
+  --accent:#4fc3f7;--accent2:#00e5ff;--accent3:#7c4dff;
+  --text:#e8f4fd;--text2:rgba(232,244,253,0.65);
+  --card:rgba(255,255,255,0.07);--border:rgba(255,255,255,0.12);
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;color:var(--text);background:linear-gradient(135deg,var(--bg1) 0%,var(--bg2) 50%,var(--bg3) 100%);background-attachment:fixed;min-height:100vh;overflow-x:hidden}
+a{color:var(--accent);text-decoration:none}
+
+/* TOP NAV */
+.top-nav{position:fixed;top:0;left:0;right:0;z-index:999;display:flex;justify-content:center;padding:14px 20px;background:rgba(10,22,35,0.92);border-bottom:1px solid var(--border)}
+.top-nav-inner{display:flex;gap:20px;align-items:center}
+.top-nav a{font-size:.82rem;color:var(--text2);font-weight:500;transition:color .2s}
+.top-nav a:hover{color:var(--accent)}
+.nav-logo{font-family:'Syne',sans-serif;font-weight:800;color:#fff!important;font-size:.95rem}
+
+/* HERO */
+.faq-hero{text-align:center;padding:110px 20px 40px;position:relative}
+.faq-hero::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:700px;height:350px;background:radial-gradient(ellipse,rgba(79,195,247,0.1) 0%,transparent 70%);pointer-events:none}
+.badge{display:inline-block;padding:6px 18px;border-radius:50px;background:rgba(79,195,247,0.12);border:1px solid rgba(79,195,247,0.3);font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:20px}
+h1{font-family:'Syne',sans-serif;font-size:clamp(2rem,5vw,3rem);font-weight:800;line-height:1.1;margin-bottom:16px;background:linear-gradient(135deg,#fff 0%,var(--accent) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.subtitle{font-size:1rem;color:var(--text2);max-width:520px;margin:0 auto 32px;line-height:1.6}
+
+/* SEARCH */
+.search-wrap{max-width:480px;margin:0 auto 30px;position:relative}
+.search-wrap input{width:100%;padding:13px 48px 13px 20px;border-radius:50px;border:1px solid var(--border);background:rgba(255,255,255,0.07);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.92rem;outline:none;transition:border-color .3s,box-shadow .3s}
+.search-wrap input::placeholder{color:var(--text2)}
+.search-wrap input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(79,195,247,0.1)}
+
+/* CATS */
+.cats{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:36px}
+.cat{padding:7px 16px;border-radius:50px;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--text2);font-size:.78rem;font-weight:500;transition:all .25s;white-space:nowrap}
+.cat:hover,.cat.active{background:var(--accent);color:#000;border-color:var(--accent);font-weight:600}
+
+/* CONTENT */
+.faq-content{max-width:760px;margin:0 auto;padding:0 20px 80px}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:36px}
+.stat{text-align:center;padding:18px 12px;border-radius:16px;background:var(--card);border:1px solid var(--border);opacity:0;transform:translateY(16px);transition:opacity .4s,transform .4s}
+.stat.visible{opacity:1;transform:translateY(0)}
+.stat-num{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;color:var(--accent);display:block}
+.stat-lbl{font-size:.7rem;color:var(--text2);margin-top:4px}
+
+.no-results{text-align:center;padding:30px;color:var(--text2);font-size:.9rem;display:none}
+
+/* SECTION TITLE */
+.sec-title{display:flex;align-items:center;gap:10px;font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;margin:28px 0 12px;opacity:0;transform:translateX(-20px);transition:opacity .4s,transform .4s}
+.sec-title.visible{opacity:1;transform:translateX(0)}
+.sec-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(79,195,247,0.3),transparent)}
+
+/* FAQ ITEM */
+.faq-item{background:var(--card);border:1px solid var(--border);border-radius:16px;margin-bottom:8px;overflow:hidden;opacity:0;transform:translateY(16px);transition:opacity .4s ease,transform .4s ease,border-color .3s}
+.faq-item.visible{opacity:1;transform:translateY(0)}
+.faq-item:hover{border-color:rgba(79,195,247,0.25)}
+.faq-item.open{border-color:rgba(79,195,247,0.4)}
+.faq-q{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;cursor:pointer;gap:12px;user-select:none}
+.faq-q-left{display:flex;align-items:center;gap:10px}
+.faq-qicon{width:32px;height:32px;border-radius:9px;flex-shrink:0;background:linear-gradient(135deg,rgba(79,195,247,0.15),rgba(124,77,255,0.15));border:1px solid rgba(79,195,247,0.15);display:flex;align-items:center;justify-content:center;font-size:.9rem}
+.faq-qtext{font-weight:600;font-size:.9rem;color:var(--text);line-height:1.4}
+.faq-arr{width:26px;height:26px;border-radius:50%;flex-shrink:0;background:rgba(255,255,255,0.06);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.65rem;color:var(--text2);transition:transform .3s,background .3s}
+.faq-item.open .faq-arr{transform:rotate(180deg);background:rgba(79,195,247,0.15);color:var(--accent);border-color:var(--accent)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.4,0,.2,1)}
+.faq-item.open .faq-a{max-height:600px}
+.faq-a-inner{padding:0 20px 18px 62px;font-size:.87rem;color:var(--text2);line-height:1.75}
+.faq-a-inner p{margin-bottom:8px}
+.faq-a-inner p:last-child{margin-bottom:0}
+.faq-a-inner ul{list-style:none;padding:6px 0}
+.faq-a-inner ul li{padding:3px 0 3px 18px;position:relative;font-size:.85rem}
+.faq-a-inner ul li::before{content:'💧';position:absolute;left:0;font-size:.68rem}
+.faq-a-inner strong{color:var(--text)}
+.tip{margin-top:10px;padding:10px 14px;border-radius:10px;background:rgba(79,195,247,0.08);border-left:3px solid var(--accent);font-size:.82rem;color:var(--text)}
+
+/* HELP */
+.help{text-align:center;padding:38px 20px;margin-top:28px;background:linear-gradient(135deg,rgba(79,195,247,0.08),rgba(124,77,255,0.08));border:1px solid rgba(79,195,247,0.2);border-radius:20px}
+.help h3{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:700;margin-bottom:8px;color:#fff}
+.help p{font-size:.88rem;color:var(--text2);margin-bottom:18px}
+.btn{display:inline-block;padding:12px 26px;border-radius:50px;background:linear-gradient(135deg,var(--accent),var(--accent3));color:#fff;font-weight:700;font-family:'Syne',sans-serif;font-size:.88rem;text-decoration:none;transition:transform .2s,box-shadow .2s;box-shadow:0 6px 24px rgba(79,195,247,0.3)}
+.btn:hover{transform:scale(1.04);box-shadow:0 10px 32px rgba(79,195,247,0.5)}
+
+footer{text-align:center;padding:26px 20px;border-top:1px solid var(--border);font-size:.75rem;color:var(--text2)}
+footer a{color:var(--accent)}
+
+@media(max-width:500px){.faq-a-inner{padding-left:20px}}
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <div class="top-nav-inner">
+    <a href="index.html" class="nav-logo">💧 Hydra</a>
+    <a href="index.html">Home</a>
+    <a href="faq.html" style="color:var(--accent)">FAQ</a>
+    <a href="privacy.html">Privacy</a>
+  </div>
+</nav>
+
+<div class="faq-hero">
+  <div class="badge">💧 Hydra Water Tracker</div>
+  <h1>Frequently Asked Questions</h1>
+  <p class="subtitle">Everything you need to know about Hydra. Can't find an answer? Contact us!</p>
+  <div class="search-wrap">
+    <input type="text" id="faq-search" placeholder="Search questions…" oninput="faqSearch(this.value)">
+  </div>
+  <div class="cats">
+    <div class="cat active" onclick="faqFilter('all',this)">All</div>
+    <div class="cat" onclick="faqFilter('general',this)">💧 General</div>
+    <div class="cat" onclick="faqFilter('data',this)">💾 Data</div>
+    <div class="cat" onclick="faqFilter('reminders',this)">⏰ Reminders</div>
+    <div class="cat" onclick="faqFilter('goals',this)">🎯 Goals</div>
+    <div class="cat" onclick="faqFilter('technical',this)">⚙️ Technical</div>
+  </div>
+</div>
+
+<div class="faq-content">
+  <div class="stats">
+    <div class="stat"><span class="stat-num">25+</span><div class="stat-lbl">Questions Answered</div></div>
+    <div class="stat"><span class="stat-num">100%</span><div class="stat-lbl">Free to Use</div></div>
+    <div class="stat"><span class="stat-num">0</span><div class="stat-lbl">Data Collected</div></div>
+    <div class="stat"><span class="stat-num">24/7</span><div class="stat-lbl">Available</div></div>
+  </div>
+
+  <div class="no-results" id="no-results">😕 No results found. Try a different search term.</div>
+
+  <!-- GENERAL -->
+  <div class="sec-title" data-cat="general">💧 General</div>
+  <div class="faq-item" data-cat="general"><div class="faq-q" onclick="faqToggle(this)"><div class="faq-q-left"><div class="faq-qicon">💧</div><div class="faq-qtext">What is Hydra Water Tracker?</div></div><div class="faq-arr">▼</div></div><div class="faq-a"><div class="faq-a-inner"><p>Hydra is a <strong>free, browser-based water tracking app</strong> that helps you monitor daily hydration. Log water intake, set personalized goals, get reminders, and view weekly analytics — no account needed.</p><div class="tip">💡 All your data stays on your device!</div></div></div></div>
+
+  <div class="faq-item" data-cat="general"><div class="faq-q" onclick="faqToggle(this)"><div class="faq-q-left"><div class="faq-qicon">💰</div><div class="faq-qtext">Is Hydra Water Tracker free?</div></div><div class="faq-arr">▼</div></div><div class="faq-a"><div class="faq-a-inner"><p><strong>Yes, 100% free!</strong> No premium plans, no subscriptions, no in-app purchases, no hidden fees. All features available to everyone.</p></div></div></div>
+
+  <div class="faq-item" data-cat="general"><div class="faq-q" onclick="faqToggle(this)"><div class="faq-q-left"><div class="faq-qicon">📱</div><div class="faq-qtext">Does it work on mobile?</div></div><div class="faq-arr">▼</div></div><div class="faq-a"><div class="faq-a-inner"><p>Yes! Fully responsive on all devices — phones, tablets, laptops, desktops. Layout automatically adapts to your screen.</p><div class="tip">💡 Best experience: Chrome or Safari on mobile.</div></div></div></div>
+
+  <div class="faq-item" data-cat="general"><div class="faq-q" onclick="faqToggle(this)"><div class="faq-q-left"><div class="faq-qicon">🌐</div><div class="faq-qtext">Which browsers are supported?</div></div><div class="faq-arr">▼</div></div><div class="faq-a"><div class="faq-a-inner"><ul><li>Google Chrome (recommended)</li><li>Mozilla Firefox</li><li>Microsoft Edge</li><li>Safari (iOS & macOS)</li><li>Samsung Internet</li></ul><p>Internet Explorer is not supported.</p></div></div></div>
+
+  <div class="faq-item" data-cat="general"><div class="faq-q" onclick="faqToggle(this)"><div class="faq-q-left"><div class="faq-qicon">🔄</div><div class="faq-qtext">Does intake reset daily automatically?</div></div><div class="faq-arr">▼</div></div><div class="faq-a"><div class="faq-a-inner"><p>Yes! Hydra automatically resets your daily intake at <strong>midnight</strong>. Previous day's data is saved to history before resetting.</p></div></div></div>
+
+  <!-- GOALS -->
+  <div class="sec-title" data-cat="goals">🎯 Goals & Tracking</div>
+  <div class="faq-item" data-cat="goals"><div class="faq-q" onclick="faqToggle(this)"><div class="faq-q-left"><div class="faq-qicon">🎯</div><div class="faq-qtext">How is my daily goal calculated?</div></div><div class="faq-arr">▼</div></div><div class="faq-a"><div class="faq-a-inner"><p>Using your <strong>weight, height, and gender</strong>:</p><div class="tip">📐 Goal = (Weight × 30) + (Height × 0.1) ml<br>Male: ×1.05 · Female: ×0.90</div><p>Example: 70kg, 170cm male ≈ <strong>2,185 ml/day</strong></p></div></div></div>
+
+  <div class="faq-item" data-cat="goals"><div class="faq-q" onclick="faqToggle(this)"><div class="faq-q-left"><div class="faq-qicon">✏️</div><div class="faq-qtext">Can I set a custom goal manually?</div></div><div class="faq-arr">▼</div></div><div class="faq-a"><div class="faq-a-inner"><p>Yes! Click the <strong>⚙️ Goal button</strong> on the main tracker. Or go to Profile, adjust sliders, and click <strong>"Apply This Goal"</strong>.</p></div></div></div>
+
+  <div class="faq-item" data-cat="goals"><div class="faq-q" onclick="faqToggle(this)"><div class="faq-q-left"><div class="faq-qicon">➕</div><div class="faq-qtext">How do I log water intake?</div></div><div class="faq-arr">▼</div></div><div class="faq-a"><div class="faq-a-inner"><ul><li>Click <strong>"+250 ml"</strong> for default serving</li><li>Click <strong>"+100"</strong> for a small glass</li><li>Click <strong>"+500"</strong> for a large bottle</li><li>Click <strong>"−100"</strong> to undo</li></ul><div class="tip">💡 Each tap plays a "glug" sound to confirm!</div></div></div></div>
+
+  <div class="faq-item" data-cat="goals"><div class="faq-q" onclick="faqToggle(this)"><div class="faq-q-left"><div class="faq-qicon">🎉</div><div class="faq-qtext">What happens when I reach my goal?</div></div><div class="faq-arr">▼</div></div><div class="faq-a"><div class="faq-a-inner"><ul><li>🎊 Colorful <strong>confetti explosion</strong></li><li>🎵 Celebratory <strong>cheer sound</strong></li><li>🔔 Browser notification (if enabled)</li><li>✅ Toast message "Daily goal achieved!"</li></ul></div></div></div>
+
+  <div class="faq-item" data-cat="goals"><div class="faq-q" onclick="faqToggle(this)"><div class="faq-q-left"><div class="faq-qicon">📊</div><div class="faq-qtext">How does the weekly chart work?</div></div><div class="faq-arr">▼</div></div><div class="faq-a"><div class="faq-a-inner"><ul><li><strong>7 circular rings</strong> — one per day, showing % of goal</li><li><strong>Line chart</strong> — intake trends over the week</li><li><strong>First/Last sip</strong> time today</li><li><strong>Weekly total</strong> in liters</li></ul></div></div></div>
+
+  <!-- REMINDERS -->
+  <div class="sec-title" data-cat="reminders">⏰ Reminders & Notifications</div>
+  <div class="faq-item" data-cat="reminders"><div class="faq-q" onclick="faqToggle(this)"><div class="faq-q-left"><div class="faq-qicon">🔔</div><div class="faq-qtext">How do I enable notifications?</div></div><div class="faq-arr">▼</div></div><div class="faq-a"><div class="faq-a-inner"><p>Go to the <strong>Reminders section</strong> → click <strong>"🔔 Enable Notifications"</strong> → click <strong>Allow</strong> in browser popup.</p><div class="tip">⚠️ If blocked: Browser Settings → Site Settings → Notifications → Allow this site</div></div></div></div>
+
+  <div class="faq-item" data-cat="reminders"><div class="faq-q" onclick="faqToggle(this)"><div class="faq-q-left"><div class="faq-qicon">➕</div><div class="faq-qtext">How do I add a reminder?</div></div><div class="faq-arr">▼</div></div><div class="faq-a"><div class="faq-a-inner"><p>Reminders section → click <strong>"+ Add Reminder"</strong>. Set the time, add a custom label, select days → click <strong>Save ✓</strong>.</p></div></div></div>
+
+  <div class="faq-item" data-cat="reminders"><div class="faq-q" onclick="faqToggle(this)"><div class="faq-q-left"><div class="faq-qicon">😴</div><div class="faq-qtext">What is Night Mode / DND?</div></div><div class="faq-arr">▼</div></div><div class="faq-a"><div class="faq-a-inner"><p>Do Not Disturb blocks all reminders during quiet hours (default: <strong>10 PM – 7 AM</strong>). Enable in the Night section and set your preferred hours.</p></div></div></div>
+
+  <div class="faq-item" data-cat="reminders"><div class="faq-q" onclick="faqToggle(this)"><div class="faq-q-left"><div class="faq-qicon">📵</div><div class="faq-qtext">Will reminders work when tab is closed?</div></div><div class="faq-arr">▼</div></div><div class="faq-a"><div class="faq-a-inner"><p>Reminders require the <strong>page to be open</strong> (can be in background tab). Fully closed tab = no reminders.</p><div class="tip">💡 Pin the tab in your browser for all-day reminders!</div></div></div></div>
+
+  <!-- DATA -->
+  <div class="sec-title" data-cat="data">💾 Data & Privacy</div>
+  <div class="faq-item" data-cat="data"><div class="faq-q" onclick="faqToggle(this)"><div class="faq-q-left"><div class="faq-qicon">🔒</div><div class="faq-qtext">Is my data private and secure?</div></div><div class="faq-arr">▼</div></div><div class="faq-a"><div class="faq-a-inner"><p><strong>100% private.</strong> All data stored exclusively in your browser's localStorage — never leaves your device. We have no servers.</p><div class="tip">🔒 Your data = your browser. Simple.</div></div></div></div>
+
+  <div class="faq-item" data-cat="data"><div class="faq-q" onclick="faqToggle(this)"><div class="faq-q-left"><div class="faq-qicon">🗑️</div><div class="faq-qtext">How do I delete all my data?</div></div><div class="faq-arr">▼</div></div><div class="faq-a"><div class="faq-a-inner"><ul><li><strong>Chrome:</strong> Settings → Privacy → Clear browsing data → Cookies and site data</li><li><strong>Firefox:</strong> Settings → Privacy → Clear Data</li><li><strong>Safari:</strong> Settings → Safari → Clear History and Website Data</li></ul></div></div></div>
+
+  <div class="faq-item" data-cat="data"><div class="faq-q" onclick="faqToggle(this)"><div class="faq-q-left"><div class="faq-qicon">📤</div><div class="faq-qtext">Can I export my data?</div></div><div class="faq-arr">▼</div></div><div class="faq-a"><div class="faq-a-inner"><p>Yes! Go to <strong>Tips section</strong> at the bottom:</p><ul><li><strong>⬇ CSV Report</strong> — Full history spreadsheet</li><li><strong>🖼 Save PNG</strong> — Visual snapshot</li><li><strong>📤 Share</strong> — Share via apps or clipboard</li></ul></div></div></div>
+
+  <div class="faq-item" data-cat="data"><div class="faq-q" onclick="faqToggle(this)"><div class="faq-q-left"><div class="faq-qicon">🔄</div><div class="faq-qtext">Will my data sync across devices?</div></div><div class="faq-arr">▼</div></div><div class="faq-a"><div class="faq-a-inner"><p>Currently data is <strong>per browser per device</strong> — no sync. Use CSV export to manually transfer data between devices.</p></div></div></div>
+
+  <!-- TECHNICAL -->
+  <div class="sec-title" data-cat="technical">⚙️ Technical</div>
+  <div class="faq-item" data-cat="technical"><div class="faq-q" onclick="faqToggle(this)"><div class="faq-q-left"><div class="faq-qicon">⚡</div><div class="faq-qtext">Does Hydra require internet?</div></div><div class="faq-arr">▼</div></div><div class="faq-a"><div class="faq-a-inner"><p>Only for initial page load (Google Fonts). Once loaded, <strong>Hydra works fully offline</strong>. All features work without internet.</p></div></div></div>
+
+  <div class="faq-item" data-cat="technical"><div class="faq-q" onclick="faqToggle(this)"><div class="faq-q-left"><div class="faq-qicon">🔊</div><div class="faq-qtext">Why is there no sound when I add water?</div></div><div class="faq-arr">▼</div></div><div class="faq-a"><div class="faq-a-inner"><p>Browsers require a user interaction before playing audio. Check:</p><ul><li>Device not on silent/mute</li><li>Tab not muted (right-click tab → Unmute)</li><li>Volume turned up</li></ul></div></div></div>
+
+  <div class="faq-item" data-cat="technical"><div class="faq-q" onclick="faqToggle(this)"><div class="faq-q-left"><div class="faq-qicon">💾</div><div class="faq-qtext">Data disappeared after clearing browser cache?</div></div><div class="faq-arr">▼</div></div><div class="faq-a"><div class="faq-a-inner"><p>Expected behavior — localStorage is cleared with browser cache. To prevent loss: export CSV regularly, and when clearing cache, uncheck "Cookies and Site Data".</p></div></div></div>
+
+  <div class="faq-item" data-cat="technical"><div class="faq-q" onclick="faqToggle(this)"><div class="faq-q-left"><div class="faq-qicon">🐛</div><div class="faq-qtext">I found a bug — how do I report it?</div></div><div class="faq-arr">▼</div></div><div class="faq-a"><div class="faq-a-inner"><p>Email us: <a href="mailto:skttech786@gmail.com">skttech786@gmail.com</a> with browser name, device type, bug description, and screenshot if possible.</p></div></div></div>
+
+  <!-- HELP -->
+  <div class="help">
+    <h3>Still have questions? 🤔</h3>
+    <p>Can't find what you're looking for? Send us a message!</p>
+    <a href="mailto:skttech786@gmail.com" class="btn">✉️ Contact Support</a>
+  </div>
+
+  <footer>
+    <p>© 2026 Hydra Water Tracker · <a href="index.html">Home</a> · <a href="faq.html">FAQ</a> · <a href="privacy.html">Privacy Policy</a></p>
+    <p style="margin-top:6px">Built with 💙 · Stay hydrated, stay healthy!</p>
+  </footer>
+</div>
+
+<script>
+function faqToggle(btn){const item=btn.closest('.faq-item');const isOpen=item.classList.contains('open');document.querySelectorAll('.faq-item.open').forEach(i=>i.classList.remove('open'));if(!isOpen)item.classList.add('open')}
+function faqFilter(cat,el){document.querySelectorAll('.cat').forEach(c=>c.classList.remove('active'));el.classList.add('active');document.querySelectorAll('.faq-item').forEach(i=>i.style.display=(cat==='all'||i.dataset.cat===cat)?'':'none');document.querySelectorAll('.sec-title').forEach(t=>t.style.display=(cat==='all'||t.dataset.cat===cat)?'':'none');document.getElementById('no-results').style.display='none'}
+function faqSearch(val){const q=val.toLowerCase().trim();let found=0;document.querySelectorAll('.cat').forEach(c=>c.classList.toggle('active',c.textContent.trim()==='All'));document.querySelectorAll('.faq-item').forEach(item=>{const match=!q||item.textContent.toLowerCase().includes(q);item.style.display=match?'':'none';if(match)found++;if(q&&match)item.classList.add('open');else if(q&&!match)item.classList.remove('open')});document.querySelectorAll('.sec-title').forEach(t=>t.style.display=q?'none':'');document.getElementById('no-results').style.display=(!q||found>0)?'none':'block'}
+const io=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target)}})},{threshold:.1});
+document.querySelectorAll('.faq-item,.sec-title,.stat').forEach((el,i)=>{el.style.transitionDelay=(i*.03)+'s';io.observe(el)});
+</script>
+</body>
+</html>
