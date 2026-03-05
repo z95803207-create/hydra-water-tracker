@@ -223,46 +223,37 @@ const io=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersect
 document.querySelectorAll('.pp-card').forEach((c,i)=>{c.style.transitionDelay=(i*.06)+'s';io.observe(c)});
 document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',function(e){e.preventDefault();const t=document.querySelector(this.getAttribute('href'));if(t)t.scrollIntoView({behavior:'smooth'})})});
 </script>
-  <!-- Hydra Firebase Analytics Tracker -->
+ <!-- Hydra Tracker -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getFirestore, doc, setDoc, increment, serverTimestamp }
-    from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  import { getDatabase, ref, increment, update, serverTimestamp, set, push }
+    from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-  const firebaseConfig = {
+  const app = initializeApp({
     apiKey: "AIzaSyAERo-_aNCtrsn-Et20M3af3sdYsACQ48A",
     authDomain: "watertracker-36c42.firebaseapp.com",
+    databaseURL: "https://watertracker-36c42-default-rtdb.firebaseio.com",
     projectId: "watertracker-36c42",
     storageBucket: "watertracker-36c42.firebasestorage.app",
     messagingSenderId: "126348121182",
     appId: "1:126348121182:web:3a846cfa775358d03290cf"
-  };
+  });
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  // Track this page visit
+  const db = getDatabase(app);
   const today = new Date().toISOString().slice(0, 10);
   const page = location.pathname.split('/').pop() || 'index.html';
   const device = /Mobi|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop';
 
-  await setDoc(doc(db, 'analytics', 'global'), {
-    total: increment(1),
-    online: increment(1),
-  }, { merge: true });
-
-  await setDoc(doc(db, 'analytics', today), {
+  // Count visit
+  await update(ref(db, 'analytics/global'), { total: increment(1), online: increment(1) });
+  await update(ref(db, `analytics/days/${today}`), {
     visits: increment(1),
     [page]: increment(1),
-    [device]: increment(1),
-    lastSeen: serverTimestamp()
-  }, { merge: true });
+    [device]: increment(1)
+  });
 
   // Decrement online after 5 min
-  setTimeout(async () => {
-    await setDoc(doc(db, 'analytics', 'global'),
-      { online: increment(-1) }, { merge: true });
-  }, 300000);
+  setTimeout(() => update(ref(db, 'analytics/global'), { online: increment(-1) }), 300000);
 </script>
 </body>
 </html>
