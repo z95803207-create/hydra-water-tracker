@@ -225,21 +225,27 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click'
 </script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, increment, update, push, serverTimestamp }
+import { getDatabase, ref, increment, update }
   from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 const app = initializeApp({
   apiKey:"AIzaSyAERo-_aNCtrsn-Et20M3af3sdYsACQ48A",
   databaseURL:"https://watertracker-36c42-default-rtdb.firebaseio.com",
-  projectId:"watertracker-36c42",appId:"1:126348121182:web:3a846cfa775358d03290cf"
+  projectId:"watertracker-36c42",
+  appId:"1:126348121182:web:3a846cfa775358d03290cf"
 });
 const db = getDatabase(app);
 const today = new Date().toISOString().slice(0,10);
-const page = location.pathname.split('/').pop()||'index.html';
-const device = /Mobi|Android/i.test(navigator.userAgent)?'mobile':'desktop';
-update(ref(db,'analytics/global'),{total:increment(1),online:increment(1)});
-update(ref(db,`analytics/days/${today}`),{visits:increment(1),[page]:increment(1),[device]:increment(1)});
-const sid='s_'+Math.random().toString(36).slice(2,10);
-update(ref(db,`sessions/${sid}`),{device,page,lastSeen:Date.now()});
+const rawPage = location.pathname.split('/').pop() || 'index';
+const page = rawPage.replace('.html','') || 'index';
+const device = /Mobi|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop';
+update(ref(db,'analytics/global'), {total:increment(1), online:increment(1)});
+update(ref(db,`analytics/days/${today}`), {
+  visits: increment(1),
+  [page]: increment(1),
+  [device]: increment(1)
+});
+const sid = 's' + Math.random().toString(36).slice(2,9);
+update(ref(db,`sessions/${sid}`), {device, page, lastSeen:Date.now()});
 setTimeout(()=>update(ref(db,'analytics/global'),{online:increment(-1)}),300000);
 </script>
 </body>
