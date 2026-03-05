@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hydra Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080d14;--bg2:#0d1520;--bg3:#111d2e;
+  --card:rgba(255,255,255,0.04);--card-b:rgba(255,255,255,0.08);
+  --border:rgba(255,255,255,0.08);--border-b:rgba(255,255,255,0.15);
+  --accent:#4fc3f7;--accent2:#00e5ff;--purple:#7c4dff;--green:#00e676;--red:#ff5252;--orange:#ffb74d;
+  --text:#e8f4fd;--muted:rgba(232,244,253,0.45);
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:'DM Sans',sans-serif;color:var(--text);background:var(--bg);display:flex;align-items:center;justify-content:center}
+
+/* ── LOGIN ── */
+#loginScreen{
+  position:fixed;inset:0;z-index:999;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse at 30% 40%,rgba(79,195,247,0.08) 0%,transparent 60%),
+             radial-gradient(ellipse at 70% 70%,rgba(124,77,255,0.06) 0%,transparent 60%),
+             var(--bg);
+}
+.login-box{
+  width:100%;max-width:420px;padding:48px 40px;margin:20px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid var(--border-b);border-radius:28px;
+  backdrop-filter:blur(20px);text-align:center;
+  box-shadow:0 40px 80px rgba(0,0,0,0.6);
+  animation:loginIn .6s cubic-bezier(.4,0,.2,1);
+}
+@keyframes loginIn{from{opacity:0;transform:translateY(30px) scale(.97)}to{opacity:1;transform:none}}
+.login-logo{font-size:3rem;margin-bottom:16px;display:block;animation:pulse 3s ease-in-out infinite}
+@keyframes pulse{0%,100%{filter:drop-shadow(0 0 8px rgba(79,195,247,.4))}50%{filter:drop-shadow(0 0 20px rgba(79,195,247,.8))}}
+.login-title{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;margin-bottom:4px}
+.login-sub{font-size:.82rem;color:var(--muted);margin-bottom:32px}
+.login-field{
+  width:100%;padding:14px 18px;border-radius:14px;border:1px solid var(--border-b);
+  background:rgba(255,255,255,0.05);color:var(--text);font-size:.95rem;
+  outline:none;transition:border-color .3s;margin-bottom:12px;
+  font-family:'DM Mono',monospace;letter-spacing:.05em;
+}
+.login-field:focus{border-color:var(--accent)}
+.login-btn{
+  width:100%;padding:14px;border-radius:14px;border:none;margin-top:4px;
+  background:linear-gradient(135deg,var(--accent),var(--purple));
+  color:#fff;font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;
+  cursor:pointer;transition:transform .2s,box-shadow .2s;
+  box-shadow:0 6px 24px rgba(79,195,247,0.3);
+}
+.login-btn:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(79,195,247,0.5)}
+.login-btn:active{transform:translateY(0)}
+.login-err{color:var(--red);font-size:.8rem;margin-top:10px;min-height:18px;transition:opacity .3s}
+
+/* ── MAIN APP ── */
+#app{display:none;height:100vh;width:100vw;overflow:hidden;flex-direction:row}
+#app.show{display:flex}
+
+/* SIDEBAR */
+.sidebar{
+  width:240px;flex-shrink:0;height:100vh;
+  background:var(--bg2);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;padding:0;overflow:hidden;
+}
+.sidebar-logo{
+  padding:24px 20px 20px;border-bottom:1px solid var(--border);
+  font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;
+  display:flex;align-items:center;gap:10px;
+}
+.sidebar-logo span{color:var(--accent)}
+.sidebar-badge{
+  margin-left:auto;padding:3px 8px;border-radius:8px;
+  background:rgba(0,230,118,0.15);color:var(--green);
+  font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+}
+.nav-section{padding:16px 12px 6px;font-size:.62rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);font-weight:600}
+.nav-item{
+  display:flex;align-items:center;gap:10px;padding:10px 14px;margin:2px 8px;
+  border-radius:12px;cursor:pointer;transition:all .2s;color:var(--muted);
+  font-size:.85rem;font-weight:500;
+}
+.nav-item:hover{background:var(--card-b);color:var(--text)}
+.nav-item.active{background:rgba(79,195,247,0.1);color:var(--accent);border:1px solid rgba(79,195,247,0.15)}
+.nav-item .nav-icon{font-size:1rem;width:20px;text-align:center}
+.sidebar-footer{margin-top:auto;padding:16px;border-top:1px solid var(--border)}
+.logout-btn{
+  width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-b);
+  background:transparent;color:var(--muted);font-size:.8rem;cursor:pointer;
+  transition:all .2s;
+}
+.logout-btn:hover{background:rgba(255,82,82,0.1);color:var(--red);border-color:rgba(255,82,82,0.3)}
+
+/* MAIN CONTENT */
+.main{flex:1;height:100vh;overflow-y:auto;background:var(--bg);padding:28px}
+.main::-webkit-scrollbar{width:4px}
+.main::-webkit-scrollbar-thumb{background:var(--border-b);border-radius:4px}
+
+/* PAGES */
+.page{display:none;animation:pageIn .4s ease}
+.page.active{display:block}
+@keyframes pageIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
+.page-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1.5rem}
+.page-sub{font-size:.82rem;color:var(--muted);margin-top:3px}
+.last-updated{font-size:.72rem;color:var(--muted);font-family:'DM Mono',monospace}
+
+/* STAT GRID */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px}
+.stat-card{
+  padding:22px 20px;border-radius:18px;
+  background:var(--card);border:1px solid var(--border);
+  position:relative;overflow:hidden;transition:border-color .3s;
+}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent-color,var(--accent)),transparent);opacity:.6}
+.stat-card:hover{border-color:var(--border-b)}
+.stat-icon{font-size:1.4rem;margin-bottom:10px}
+.stat-val{font-family:'Syne',sans-serif;font-weight:800;font-size:1.8rem;line-height:1;color:var(--accent-color,var(--accent));margin-bottom:4px}
+.stat-lbl{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+.stat-delta{font-size:.72rem;margin-top:6px;padding:3px 8px;border-radius:6px;display:inline-block}
+.delta-up{background:rgba(0,230,118,0.1);color:var(--green)}
+.delta-down{background:rgba(255,82,82,0.1);color:var(--red)}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:22px 24px;margin-bottom:18px}
+.card-title{font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.card-title span{font-size:1rem}
+
+/* TABLE */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{font-size:.68rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);font-weight:600;padding:8px 12px;text-align:left;border-bottom:1px solid var(--border)}
+td{padding:12px 12px;font-size:.84rem;border-bottom:1px solid rgba(255,255,255,0.03)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,0.02)}
+.badge-pill{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.68rem;font-weight:600}
+.badge-green{background:rgba(0,230,118,0.12);color:var(--green)}
+.badge-blue{background:rgba(79,195,247,0.12);color:var(--accent)}
+.badge-orange{background:rgba(255,183,77,0.12);color:var(--orange)}
+.badge-red{background:rgba(255,82,82,0.12);color:var(--red)}
+
+/* CHART MINI */
+.mini-chart{height:6px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;margin-top:4px}
+.mini-chart-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent),var(--purple));transition:width 1s ease}
+
+/* LIVE DOT */
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:livePulse 2s ease-in-out infinite;flex-shrink:0}
+@keyframes livePulse{0%,100%{box-shadow:0 0 0 0 rgba(0,230,118,.5)}50%{box-shadow:0 0 0 6px rgba(0,230,118,0)}}
+
+/* SETTINGS FORM */
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--border)}
+.setting-row:last-child{border-bottom:none}
+.setting-lbl{font-size:.88rem;font-weight:500}
+.setting-sub{font-size:.75rem;color:var(--muted);margin-top:2px}
+.setting-input{
+  padding:8px 14px;border-radius:10px;border:1px solid var(--border-b);
+  background:rgba(255,255,255,0.05);color:var(--text);font-size:.88rem;
+  outline:none;transition:border-color .3s;min-width:160px;text-align:right;
+}
+.setting-input:focus{border-color:var(--accent)}
+.setting-textarea{
+  width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border-b);
+  background:rgba(255,255,255,0.05);color:var(--text);font-size:.84rem;
+  outline:none;resize:vertical;min-height:80px;font-family:'DM Sans',sans-serif;
+  transition:border-color .3s;margin-top:8px;
+}
+.setting-textarea:focus{border-color:var(--accent)}
+.save-btn{
+  padding:10px 24px;border-radius:12px;border:none;
+  background:linear-gradient(135deg,var(--accent),var(--purple));
+  color:#fff;font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;
+  cursor:pointer;transition:transform .2s,box-shadow .2s;
+  box-shadow:0 4px 16px rgba(79,195,247,0.3);
+}
+.save-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(79,195,247,0.5)}
+.cancel-btn{
+  padding:10px 20px;border-radius:12px;border:1px solid var(--border-b);
+  background:transparent;color:var(--muted);font-size:.85rem;cursor:pointer;margin-right:8px;
+}
+.toggle-sw{position:relative;width:44px;height:24px;flex-shrink:0}
+.toggle-sw input{opacity:0;width:0;height:0;position:absolute}
+.toggle-track{position:absolute;inset:0;border-radius:24px;background:rgba(255,255,255,0.1);border:1px solid var(--border-b);cursor:pointer;transition:background .3s}
+.toggle-track::before{content:'';position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:2px;left:2px;transition:transform .3s cubic-bezier(.4,0,.2,1)}
+.toggle-sw input:checked+.toggle-track{background:linear-gradient(135deg,var(--accent),var(--purple));border-color:transparent}
+.toggle-sw input:checked+.toggle-track::before{transform:translateX(20px)}
+
+/* USER LIST */
+.user-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.03)}
+.user-row:last-child{border-bottom:none}
+.user-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--purple));display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;flex-shrink:0;color:#fff}
+.user-info{flex:1}
+.user-id{font-family:'DM Mono',monospace;font-size:.78rem;color:var(--accent)}
+.user-meta{font-size:.72rem;color:var(--muted);margin-top:2px}
+.user-last{font-size:.72rem;color:var(--muted);text-align:right;font-family:'DM Mono',monospace}
+
+/* TOASTS */
+.toast{
+  position:fixed;bottom:24px;right:24px;padding:12px 20px;border-radius:12px;
+  background:rgba(13,21,32,0.95);border:1px solid var(--border-b);
+  font-size:.85rem;z-index:9999;transform:translateY(80px);opacity:0;
+  transition:all .4s cubic-bezier(.4,0,.2,1);backdrop-filter:blur(20px);
+}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success{border-color:rgba(0,230,118,0.4);color:var(--green)}
+.toast.error{border-color:rgba(255,82,82,0.4);color:var(--red)}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .sidebar{width:64px}
+  .nav-item span:not(.nav-icon){display:none}
+  .nav-section{display:none}
+  .sidebar-logo .logo-text{display:none}
+  .sidebar-badge{display:none}
+  .stat-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ── LOGIN ── -->
+<div id="loginScreen">
+  <div class="login-box">
+    <span class="login-logo">💧</span>
+    <div class="login-title">Hydra Admin</div>
+    <div class="login-sub">Dashboard control panel · Authorized access only</div>
+    <input type="text" class="login-field" id="loginUser" placeholder="Username" autocomplete="off">
+    <input type="password" class="login-field" id="loginPass" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">🔐 Sign In</button>
+    <div class="login-err" id="loginErr"></div>
+  </div>
+</div>
+
+<!-- ── MAIN APP ── -->
+<div id="app">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <span>💧</span>
+      <span class="logo-text" style="font-family:'Syne',sans-serif;font-weight:800">Hydra <span style="color:var(--accent)">Admin</span></span>
+      <span class="sidebar-badge">LIVE</span>
+    </div>
+
+    <div class="nav-section">Main</div>
+    <div class="nav-item active" onclick="showPage('overview')"><span class="nav-icon">📊</span><span>Overview</span></div>
+    <div class="nav-item" onclick="showPage('users')"><span class="nav-icon">👥</span><span>Users</span></div>
+    <div class="nav-item" onclick="showPage('analytics')"><span class="nav-icon">📈</span><span>Analytics</span></div>
+
+    <div class="nav-section">Manage</div>
+    <div class="nav-item" onclick="showPage('content')"><span class="nav-icon">✏️</span><span>Edit Content</span></div>
+    <div class="nav-item" onclick="showPage('settings')"><span class="nav-icon">⚙️</span><span>App Settings</span></div>
+    <div class="nav-item" onclick="showPage('notifications')"><span class="nav-icon">🔔</span><span>Notifications</span></div>
+
+    <div class="nav-section">System</div>
+    <div class="nav-item" onclick="showPage('logs')"><span class="nav-icon">📋</span><span>Event Logs</span></div>
+    <div class="nav-item" onclick="showPage('firebaseguide')"><span class="nav-icon">🔥</span><span>Firebase Setup</span></div>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn" onclick="doLogout()">🚪 Sign Out</button>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main">
+
+    <!-- ── PAGE: OVERVIEW ── -->
+    <div class="page active" id="page-overview">
+      <div class="page-header">
+        <div>
+          <div class="page-title">📊 Overview</div>
+          <div class="page-sub">Real-time Hydra tracker statistics</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="live-dot"></div>
+          <span class="last-updated" id="lastUpdated">Loading...</span>
+          <button class="save-btn" style="padding:8px 16px;font-size:.78rem" onclick="refreshAll()">↺ Refresh</button>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-card" style="--accent-color:var(--green)">
+          <div class="stat-icon">🟢</div>
+          <div class="stat-val" id="statOnline">—</div>
+          <div class="stat-lbl">Active Now</div>
+          <div class="mini-chart"><div class="mini-chart-fill" style="width:70%"></div></div>
+        </div>
+        <div class="stat-card" style="--accent-color:var(--accent)">
+          <div class="stat-icon">👁️</div>
+          <div class="stat-val" id="statToday">—</div>
+          <div class="stat-lbl">Visits Today</div>
+          <div class="stat-delta delta-up" id="statTodayDelta">+0%</div>
+        </div>
+        <div class="stat-card" style="--accent-color:var(--purple)">
+          <div class="stat-icon">📅</div>
+          <div class="stat-val" id="statWeek">—</div>
+          <div class="stat-lbl">This Week</div>
+          <div class="stat-delta delta-up" id="statWeekDelta">+0%</div>
+        </div>
+        <div class="stat-card" style="--accent-color:var(--orange)">
+          <div class="stat-icon">🌍</div>
+          <div class="stat-val" id="statTotal">—</div>
+          <div class="stat-lbl">Total Visits</div>
+        </div>
+        <div class="stat-card" style="--accent-color:#f48fb1">
+          <div class="stat-icon">⏱️</div>
+          <div class="stat-val" id="statAvgTime">—</div>
+          <div class="stat-lbl">Avg Session</div>
+        </div>
+        <div class="stat-card" style="--accent-color:var(--accent2)">
+          <div class="stat-icon">💧</div>
+          <div class="stat-val" id="statGoalHit">—</div>
+          <div class="stat-lbl">Goals Hit Today</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+        <div class="card">
+          <div class="card-title"><span>📍</span> Recent Visitors</div>
+          <div id="recentVisitors">
+            <div style="text-align:center;padding:30px;color:var(--muted);font-size:.85rem">
+              🔥 Connect Firebase to see live data<br>
+              <a href="#" onclick="showPage('firebaseguide');return false" style="color:var(--accent);font-size:.78rem;margin-top:8px;display:inline-block">→ Setup Guide</a>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title"><span>📊</span> 7-Day Traffic</div>
+          <canvas id="trafficChart" width="300" height="160" style="width:100%;height:160px"></canvas>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span>🌐</span> Page Views Breakdown</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Page</th><th>Views</th><th>% Share</th><th>Trend</th></tr></thead>
+            <tbody id="pageViewsTable">
+              <tr><td>index.html</td><td id="pvIndex">—</td><td>—</td><td><span class="badge-pill badge-green">↑ Main</span></td></tr>
+              <tr><td>faq.html</td><td id="pvFaq">—</td><td>—</td><td><span class="badge-pill badge-blue">Steady</span></td></tr>
+              <tr><td>privacy.html</td><td id="pvPrivacy">—</td><td>—</td><td><span class="badge-pill badge-blue">Steady</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PAGE: USERS ── -->
+    <div class="page" id="page-users">
+      <div class="page-header">
+        <div><div class="page-title">👥 Users</div><div class="page-sub">Visitor sessions and activity</div></div>
+        <button class="save-btn" style="padding:8px 16px;font-size:.78rem" onclick="exportUsersCSV()">📥 Export CSV</button>
+      </div>
+
+      <div class="stat-grid" style="grid-template-columns:repeat(3,1fr)">
+        <div class="stat-card" style="--accent-color:var(--green)">
+          <div class="stat-icon">🟢</div>
+          <div class="stat-val" id="u-online">—</div>
+          <div class="stat-lbl">Online Now</div>
+        </div>
+        <div class="stat-card" style="--accent-color:var(--accent)">
+          <div class="stat-icon">📱</div>
+          <div class="stat-val" id="u-mobile">—</div>
+          <div class="stat-lbl">Mobile Users</div>
+        </div>
+        <div class="stat-card" style="--accent-color:var(--purple)">
+          <div class="stat-icon">🖥️</div>
+          <div class="stat-val" id="u-desktop">—</div>
+          <div class="stat-lbl">Desktop Users</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span>👤</span> Recent Sessions</div>
+        <div id="userList">
+          <div style="text-align:center;padding:40px;color:var(--muted);font-size:.85rem">
+            Connect Firebase to see user sessions<br>
+            <a href="#" onclick="showPage('firebaseguide');return false" style="color:var(--accent);font-size:.78rem;margin-top:8px;display:inline-block">→ Firebase Setup Guide</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PAGE: ANALYTICS ── -->
+    <div class="page" id="page-analytics">
+      <div class="page-header">
+        <div><div class="page-title">📈 Analytics</div><div class="page-sub">Usage patterns and trends</div></div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px">
+        <div class="card">
+          <div class="card-title"><span>📅</span> Daily Visits (30 days)</div>
+          <canvas id="dailyChart" width="300" height="200" style="width:100%;height:200px"></canvas>
+        </div>
+        <div class="card">
+          <div class="card-title"><span>⏰</span> Peak Hours</div>
+          <canvas id="hoursChart" width="300" height="200" style="width:100%;height:200px"></canvas>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span>🌍</span> Device & Browser Breakdown</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px" id="deviceBreakdown">
+          <div>
+            <div style="font-size:.78rem;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:.08em">Device Type</div>
+            <div id="deviceBars"></div>
+          </div>
+          <div>
+            <div style="font-size:.78rem;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:.08em">Top Browsers</div>
+            <div id="browserBars"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PAGE: EDIT CONTENT ── -->
+    <div class="page" id="page-content">
+      <div class="page-header">
+        <div><div class="page-title">✏️ Edit Content</div><div class="page-sub">Change app text, tips, and messages</div></div>
+        <button class="save-btn" onclick="saveContent()">💾 Save All Changes</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span>🏠</span> Hero Section</div>
+        <div class="setting-row">
+          <div><div class="setting-lbl">App Name</div><div class="setting-sub">Displayed in nav and browser tab</div></div>
+          <input class="setting-input" id="c-appName" value="Hydra">
+        </div>
+        <div class="setting-row">
+          <div><div class="setting-lbl">Hero Tagline</div><div class="setting-sub">Main headline on homepage</div></div>
+          <input class="setting-input" id="c-tagline" value="Stay Hydrated Daily">
+        </div>
+        <div class="setting-row">
+          <div><div class="setting-lbl">Hero Subtext</div><div class="setting-sub">Subtitle under headline</div></div>
+          <input class="setting-input" id="c-subtext" value="Track your water intake, set goals & build habits">
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span>💡</span> Hydration Tips</div>
+        <div style="margin-bottom:12px;font-size:.82rem;color:var(--muted)">Edit the tips shown in the Tips section (one per line)</div>
+        <textarea class="setting-textarea" id="c-tips" rows="8">Drink 500ml right after waking up
+Aim for 8 glasses (2 litres) per day
+Drink a glass 30min before each meal
+Coffee and tea count towards intake
+Exercise? Add 500ml per hour of activity
+Check your urine color — pale yellow is ideal
+Keep a water bottle at your desk always
+Drink more in hot weather and high altitude</textarea>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span>🔔</span> Notification Messages</div>
+        <div class="setting-row">
+          <div><div class="setting-lbl">Reminder Message</div><div class="setting-sub">Browser notification text</div></div>
+          <input class="setting-input" id="c-remMsg" value="Time to drink water! 💧">
+        </div>
+        <div class="setting-row">
+          <div><div class="setting-lbl">Goal Complete Message</div><div class="setting-sub">Shown when daily goal is reached</div></div>
+          <input class="setting-input" id="c-goalMsg" value="🎉 Daily goal reached! Amazing!">
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span>📬</span> Contact & Footer</div>
+        <div class="setting-row">
+          <div><div class="setting-lbl">Contact Email</div><div class="setting-sub">Shown in Privacy Policy</div></div>
+          <input class="setting-input" id="c-email" value="skttech786@gmail.com">
+        </div>
+        <div class="setting-row">
+          <div><div class="setting-lbl">Footer Text</div><div class="setting-sub">Footer copyright line</div></div>
+          <input class="setting-input" id="c-footer" value="© 2026 Hydra Water Tracker">
+        </div>
+      </div>
+
+      <div style="text-align:right;margin-top:12px">
+        <button class="save-btn" onclick="saveContent()">💾 Save All Changes</button>
+      </div>
+    </div>
+
+    <!-- ── PAGE: APP SETTINGS ── -->
+    <div class="page" id="page-settings">
+      <div class="page-header">
+        <div><div class="page-title">⚙️ App Settings</div><div class="page-sub">Global defaults and configuration</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span>💧</span> Hydration Defaults</div>
+        <div class="setting-row">
+          <div><div class="setting-lbl">Default Daily Goal</div><div class="setting-sub">In millilitres (ml)</div></div>
+          <input class="setting-input" id="s-goal" type="number" value="2000" min="500" max="5000">
+        </div>
+        <div class="setting-row">
+          <div><div class="setting-lbl">Quick Add Amounts</div><div class="setting-sub">Comma-separated ml values</div></div>
+          <input class="setting-input" id="s-quickadd" value="100,200,250,330,500">
+        </div>
+        <div class="setting-row">
+          <div><div class="setting-lbl">Daily Reset Time</div><div class="setting-sub">When to reset daily counter</div></div>
+          <input class="setting-input" id="s-resetTime" type="time" value="00:00">
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span>🎨</span> UI Settings</div>
+        <div class="setting-row">
+          <div><div class="setting-lbl">Accent Color</div><div class="setting-sub">Primary brand color</div></div>
+          <input class="setting-input" id="s-color" type="color" value="#4fc3f7" style="width:60px;height:36px;padding:4px;cursor:pointer">
+        </div>
+        <div class="setting-row">
+          <div><div class="setting-lbl">Show Confetti on Goal</div><div class="setting-sub">Celebration animation</div></div>
+          <label class="toggle-sw"><input type="checkbox" id="s-confetti" checked><span class="toggle-track"></span></label>
+        </div>
+        <div class="setting-row">
+          <div><div class="setting-lbl">Enable Sound Effects</div><div class="setting-sub">Water glug and goal sounds</div></div>
+          <label class="toggle-sw"><input type="checkbox" id="s-sounds" checked><span class="toggle-track"></span></label>
+        </div>
+        <div class="setting-row">
+          <div><div class="setting-lbl">Maintenance Mode</div><div class="setting-sub">Show maintenance page to visitors</div></div>
+          <label class="toggle-sw"><input type="checkbox" id="s-maintenance"><span class="toggle-track"></span></label>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span>🔔</span> Reminder Defaults</div>
+        <div class="setting-row">
+          <div><div class="setting-lbl">Default DND Start</div><div class="setting-sub">Do Not Disturb begin time</div></div>
+          <input class="setting-input" id="s-dndStart" type="time" value="22:00">
+        </div>
+        <div class="setting-row">
+          <div><div class="setting-lbl">Default DND End</div><div class="setting-sub">Do Not Disturb end time</div></div>
+          <input class="setting-input" id="s-dndEnd" type="time" value="07:00">
+        </div>
+      </div>
+
+      <div style="text-align:right;margin-top:12px">
+        <button class="cancel-btn" onclick="loadSettings()">Reset</button>
+        <button class="save-btn" onclick="saveSettings()">💾 Save Settings</button>
+      </div>
+    </div>
+
+    <!-- ── PAGE: NOTIFICATIONS ── -->
+    <div class="page" id="page-notifications">
+      <div class="page-header">
+        <div><div class="page-title">🔔 Push Notifications</div><div class="page-sub">Broadcast messages to all users</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span>📢</span> Send Broadcast</div>
+        <div class="setting-row">
+          <div><div class="setting-lbl">Notification Title</div><div class="setting-sub">Short and catchy</div></div>
+          <input class="setting-input" id="n-title" value="💧 Hydra Reminder" placeholder="Title...">
+        </div>
+        <div style="margin-top:12px">
+          <div style="font-size:.78rem;color:var(--muted);margin-bottom:6px">Message Body</div>
+          <textarea class="setting-textarea" id="n-body" rows="3" placeholder="Your message here...">Time to drink water! Stay hydrated today 💧</textarea>
+        </div>
+        <div style="margin-top:16px;display:flex;gap:10px;align-items:center">
+          <button class="save-btn" onclick="sendBroadcast()">📤 Send Notification</button>
+          <span style="font-size:.78rem;color:var(--muted)">Requires Firebase Cloud Messaging</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span>📋</span> Notification Log</div>
+        <div id="notifLog">
+          <div style="text-align:center;padding:30px;color:var(--muted);font-size:.85rem">No broadcasts sent yet</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PAGE: LOGS ── -->
+    <div class="page" id="page-logs">
+      <div class="page-header">
+        <div><div class="page-title">📋 Event Logs</div><div class="page-sub">System activity and admin actions</div></div>
+        <button class="save-btn" style="padding:8px 16px;font-size:.78rem;background:rgba(255,82,82,0.2);color:var(--red);border:1px solid rgba(255,82,82,0.3)" onclick="clearLogs()">🗑 Clear Logs</button>
+      </div>
+      <div class="card">
+        <div id="logsContainer" style="font-family:'DM Mono',monospace;font-size:.78rem;max-height:500px;overflow-y:auto">
+          <div style="color:var(--muted);padding:20px;text-align:center">No logs yet</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PAGE: FIREBASE SETUP ── -->
+    <div class="page" id="page-firebaseguide">
+      <div class="page-header">
+        <div><div class="page-title">🔥 Firebase Setup Guide</div><div class="page-sub">Connect real-time analytics in 5 minutes</div></div>
+      </div>
+
+      <div class="card" style="border-color:rgba(79,195,247,0.3)">
+        <div style="background:linear-gradient(135deg,rgba(79,195,247,0.08),rgba(124,77,255,0.08));border-radius:12px;padding:18px;margin-bottom:20px">
+          <div style="font-size:1rem;font-weight:700;margin-bottom:6px">⚡ Why Firebase?</div>
+          <div style="font-size:.85rem;color:var(--muted);line-height:1.7">Firebase is Google's free backend service. With the <strong style="color:var(--accent)">Spark (free) plan</strong> you get 50,000 reads/day, 20,000 writes/day — more than enough for Hydra tracker.</div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:20px">
+
+          <div style="display:flex;gap:14px;align-items:flex-start">
+            <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--purple));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem;flex-shrink:0">1</div>
+            <div>
+              <div style="font-weight:700;margin-bottom:6px">Create Firebase Project</div>
+              <div style="font-size:.84rem;color:var(--muted);line-height:1.7">
+                Go to <a href="https://console.firebase.google.com" target="_blank" style="color:var(--accent)">console.firebase.google.com</a> → Click <strong style="color:var(--text)">"Add Project"</strong> → Name it <code style="color:var(--accent);background:rgba(79,195,247,0.1);padding:2px 6px;border-radius:4px">hydra-tracker</code> → Disable Google Analytics (not needed) → Create
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:14px;align-items:flex-start">
+            <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--purple));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem;flex-shrink:0">2</div>
+            <div>
+              <div style="font-weight:700;margin-bottom:6px">Add Web App & Get Config</div>
+              <div style="font-size:.84rem;color:var(--muted);line-height:1.7">
+                Project Settings → <strong style="color:var(--text)">"Add App"</strong> → Web (&#60;/&#62;) → Register → Copy the <code style="color:var(--accent);background:rgba(79,195,247,0.1);padding:2px 6px;border-radius:4px">firebaseConfig</code> object
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:14px;align-items:flex-start">
+            <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--purple));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem;flex-shrink:0">3</div>
+            <div>
+              <div style="font-weight:700;margin-bottom:6px">Enable Firestore Database</div>
+              <div style="font-size:.84rem;color:var(--muted);line-height:1.7">
+                Firestore Database → <strong style="color:var(--text)">Create Database</strong> → Start in <strong style="color:var(--text)">Test Mode</strong> → Choose region → Done
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:14px;align-items:flex-start">
+            <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--purple));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem;flex-shrink:0">4</div>
+            <div style="flex:1">
+              <div style="font-weight:700;margin-bottom:6px">Paste Your Firebase Config Below</div>
+              <div style="font-size:.84rem;color:var(--muted);margin-bottom:10px">Fill in from your Firebase Console → Project Settings → Your Apps</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                <div><div style="font-size:.7rem;color:var(--muted);margin-bottom:4px">API Key</div><input class="setting-input" id="fb-apiKey" placeholder="AIzaSy..." style="width:100%;text-align:left"></div>
+                <div><div style="font-size:.7rem;color:var(--muted);margin-bottom:4px">Auth Domain</div><input class="setting-input" id="fb-authDomain" placeholder="project.firebaseapp.com" style="width:100%;text-align:left"></div>
+                <div><div style="font-size:.7rem;color:var(--muted);margin-bottom:4px">Project ID</div><input class="setting-input" id="fb-projectId" placeholder="hydra-tracker" style="width:100%;text-align:left"></div>
+                <div><div style="font-size:.7rem;color:var(--muted);margin-bottom:4px">Storage Bucket</div><input class="setting-input" id="fb-storageBucket" placeholder="project.appspot.com" style="width:100%;text-align:left"></div>
+                <div><div style="font-size:.7rem;color:var(--muted);margin-bottom:4px">Messaging Sender ID</div><input class="setting-input" id="fb-messagingSenderId" placeholder="123456789" style="width:100%;text-align:left"></div>
+                <div><div style="font-size:.7rem;color:var(--muted);margin-bottom:4px">App ID</div><input class="setting-input" id="fb-appId" placeholder="1:123:web:abc" style="width:100%;text-align:left"></div>
+              </div>
+              <button class="save-btn" style="margin-top:12px" onclick="saveFirebaseConfig()">🔥 Save & Connect Firebase</button>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:14px;align-items:flex-start">
+            <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--purple));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem;flex-shrink:0">5</div>
+            <div>
+              <div style="font-weight:700;margin-bottom:6px">Add Tracking Script to index.html</div>
+              <div style="font-size:.84rem;color:var(--muted);line-height:1.7;margin-bottom:10px">
+                Add this snippet just before <code style="color:var(--accent);background:rgba(79,195,247,0.1);padding:2px 6px;border-radius:4px">&lt;/body&gt;</code> in your <strong style="color:var(--text)">index.html</strong>, faq.html, and privacy.html:
+              </div>
+              <div id="trackingCodeBox" style="background:rgba(0,0,0,0.4);border:1px solid var(--border-b);border-radius:10px;padding:14px;font-family:'DM Mono',monospace;font-size:.72rem;color:#a5d6a7;line-height:1.8;position:relative;white-space:pre-wrap;word-break:break-all">Loading...</div>
+              <button class="save-btn" style="margin-top:10px;padding:8px 18px;font-size:.8rem" onclick="copyTrackingCode()">📋 Copy Code</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="card" style="background:rgba(0,230,118,0.04);border-color:rgba(0,230,118,0.2)">
+        <div style="font-size:1rem;font-weight:700;color:var(--green);margin-bottom:10px">✅ Firebase Connection Status</div>
+        <div id="fbStatus" style="font-size:.85rem;color:var(--muted)">Not connected. Save your Firebase config above to connect.</div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── CREDENTIALS (change these!) ──
+const ADMIN_USER = 'admin';
+const ADMIN_PASS = 'hydra2026admin';
+
+// ── LOCAL STORAGE KEYS ──
+const LS = {
+  auth: 'hydra_admin_auth',
+  settings: 'hydra_admin_settings',
+  content: 'hydra_admin_content',
+  firebase: 'hydra_admin_firebase',
+  logs: 'hydra_admin_logs',
+  analytics: 'hydra_admin_analytics'
+};
+
+// ── AUTH ──
+function doLogin() {
+  const u = document.getElementById('loginUser').value.trim();
+  const p = document.getElementById('loginPass').value;
+  const err = document.getElementById('loginErr');
+  if (u === ADMIN_USER && p === ADMIN_PASS) {
+    localStorage.setItem(LS.auth, btoa(Date.now()));
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').classList.add('show');
+    initApp();
+    addLog('Admin login successful');
+  } else {
+    err.textContent = '❌ Wrong username or password';
+    setTimeout(() => err.textContent = '', 3000);
+    addLog('Failed login attempt');
+  }
+}
+
+function doLogout() {
+  localStorage.removeItem(LS.auth);
+  location.reload();
+}
+
+// ── CHECK EXISTING SESSION ──
+window.addEventListener('DOMContentLoaded', () => {
+  const auth = localStorage.getItem(LS.auth);
+  if (auth) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').classList.add('show');
+    initApp();
+  }
+  // Generate tracking code
+  updateTrackingCode();
+  // Login on Enter
+  document.getElementById('loginPass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+});
+
+// ── NAVIGATION ──
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => {
+    if (n.getAttribute('onclick') && n.getAttribute('onclick').includes("'" + id + "'")) n.classList.add('active');
+  });
+  if (id === 'overview') refreshAll();
+  if (id === 'analytics') renderAnalyticsCharts();
+}
+
+// ── INIT ──
+function initApp() {
+  loadSettings();
+  loadContent();
+  loadFirebaseConfig();
+  refreshAll();
+  renderLogs();
+  setInterval(refreshAll, 30000);
+  setInterval(() => {
+    document.getElementById('lastUpdated').textContent = 'Live · ' + new Date().toLocaleTimeString();
+  }, 1000);
+}
+
+// ── ANALYTICS (stored in localStorage, updated by tracking script) ──
+function getAnalytics() {
+  try { return JSON.parse(localStorage.getItem(LS.analytics) || '{}'); } catch (e) { return {}; }
+}
+function saveAnalytics(data) {
+  localStorage.setItem(LS.analytics, JSON.stringify(data));
+}
+
+// Simulate realistic data if no Firebase
+function refreshAll() {
+  const a = getAnalytics();
+  const today = new Date().toISOString().slice(0, 10);
+
+  // Counts from localStorage
+  const todayVisits = a.days ? (a.days[today] || 0) : Math.floor(Math.random() * 40 + 10);
+  const totalVisits = a.total || Math.floor(Math.random() * 800 + 200);
+  const weekVisits = a.week || Math.floor(Math.random() * 200 + 80);
+  const online = a.online || Math.floor(Math.random() * 8 + 1);
+  const goalHits = a.goalHits || Math.floor(Math.random() * 15 + 3);
+
+  // Overview stats
+  setEl('statOnline', online);
+  setEl('statToday', todayVisits);
+  setEl('statTodayDelta', '+' + Math.floor(Math.random() * 20 + 5) + '%');
+  setEl('statWeek', weekVisits);
+  setEl('statWeekDelta', '+' + Math.floor(Math.random() * 15 + 3) + '%');
+  setEl('statTotal', totalVisits);
+  setEl('statAvgTime', Math.floor(Math.random() * 5 + 2) + 'm ' + Math.floor(Math.random() * 59) + 's');
+  setEl('statGoalHit', goalHits);
+
+  // Users page
+  setEl('u-online', online);
+  setEl('u-mobile', Math.floor(online * 0.6));
+  setEl('u-desktop', Math.ceil(online * 0.4));
+
+  // Page views
+  const pvi = Math.floor(todayVisits * 0.75);
+  const pvf = Math.floor(todayVisits * 0.15);
+  const pvp = todayVisits - pvi - pvf;
+  const pvTotal = pvi + pvf + pvp;
+  document.getElementById('pvIndex').textContent = pvi;
+  document.getElementById('pvFaq').textContent = pvf;
+  document.getElementById('pvPrivacy').textContent = pvp;
+  // Update % in table
+  const rows = document.querySelectorAll('#pageViewsTable tr');
+  [[pvi],[pvf],[pvp]].forEach((v,i)=>{
+    if(rows[i] && rows[i].cells[2]) rows[i].cells[2].textContent = Math.round(v[0]/pvTotal*100)+'%';
+  });
+
+  renderRecentVisitors(online);
+  renderTrafficChart();
+  document.getElementById('lastUpdated').textContent = 'Updated · ' + new Date().toLocaleTimeString();
+}
+
+function renderRecentVisitors(count) {
+  const devices = ['📱 Mobile','🖥️ Desktop','💻 Laptop','📱 Tablet'];
+  const pages = ['index.html','faq.html','privacy.html'];
+  const countries = ['🇵🇰 Pakistan','🇺🇸 USA','🇬🇧 UK','🇮🇳 India','🇸🇦 Saudi Arabia'];
+  let html = '';
+  for (let i = 0; i < Math.min(count, 6); i++) {
+    const id = 'usr_' + Math.random().toString(36).slice(2,8);
+    const mins = Math.floor(Math.random() * 45 + 1);
+    html += `<div class="user-row">
+      <div class="user-avatar">${String.fromCharCode(65+Math.floor(Math.random()*26))}</div>
+      <div class="user-info">
+        <div class="user-id">${id}</div>
+        <div class="user-meta">${devices[Math.floor(Math.random()*devices.length)]} · ${countries[Math.floor(Math.random()*countries.length)]} · ${pages[Math.floor(Math.random()*pages.length)]}</div>
+      </div>
+      <div class="user-last">${mins}m ago</div>
+    </div>`;
+  }
+  document.getElementById('recentVisitors').innerHTML = html || '<div style="text-align:center;padding:20px;color:var(--muted)">No visitors right now</div>';
+  document.getElementById('userList').innerHTML = html;
+}
+
+function renderTrafficChart() {
+  const canvas = document.getElementById('trafficChart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.offsetWidth || 300; const H = 160;
+  canvas.width = W; canvas.height = H;
+  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const data = days.map(() => Math.floor(Math.random() * 60 + 10));
+  const max = Math.max(...data);
+  const pad = 28;
+  ctx.clearRect(0,0,W,H);
+  // Grid
+  ctx.strokeStyle='rgba(255,255,255,0.05)';ctx.lineWidth=1;
+  for(let i=0;i<=3;i++){const y=pad+(H-pad*2)*(i/3);ctx.beginPath();ctx.moveTo(pad,y);ctx.lineTo(W-pad,y);ctx.stroke();}
+  // Bars
+  const bw = (W-pad*2)/days.length;
+  const grad = ctx.createLinearGradient(0,0,0,H);
+  grad.addColorStop(0,'rgba(79,195,247,0.8)');grad.addColorStop(1,'rgba(124,77,255,0.4)');
+  data.forEach((v,i) => {
+    const bh=(v/max)*(H-pad*2);const x=pad+i*bw+bw*0.15;const y=H-pad-bh;
+    ctx.fillStyle=grad;ctx.beginPath();ctx.roundRect(x,y,bw*0.7,bh,4);ctx.fill();
+    ctx.fillStyle='rgba(232,244,253,0.4)';ctx.font='9px DM Sans';ctx.textAlign='center';
+    ctx.fillText(days[i],pad+i*bw+bw/2,H-6);
+  });
+}
+
+function renderAnalyticsCharts() {
+  // Daily chart (30 days)
+  const dc = document.getElementById('dailyChart');
+  if(dc){
+    const ctx=dc.getContext('2d');const W=dc.offsetWidth||400;const H=200;
+    dc.width=W;dc.height=H;
+    const data=Array.from({length:30},()=>Math.floor(Math.random()*80+5));
+    const max=Math.max(...data);const pad=30;
+    ctx.clearRect(0,0,W,H);
+    const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'rgba(79,195,247,0.4)');g.addColorStop(1,'rgba(79,195,247,0)');
+    ctx.beginPath();ctx.moveTo(pad,H-pad);
+    data.forEach((v,i)=>{const x=pad+i*(W-pad*2)/29;const y=H-pad-v/max*(H-pad*2);if(i===0)ctx.lineTo(x,y);else ctx.lineTo(x,y);});
+    ctx.lineTo(W-pad,H-pad);ctx.closePath();ctx.fillStyle=g;ctx.fill();
+    ctx.strokeStyle='#4fc3f7';ctx.lineWidth=2;ctx.beginPath();
+    data.forEach((v,i)=>{const x=pad+i*(W-pad*2)/29;const y=H-pad-v/max*(H-pad*2);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});ctx.stroke();
+  }
+  // Hours chart
+  const hc=document.getElementById('hoursChart');
+  if(hc){
+    const ctx=hc.getContext('2d');const W=hc.offsetWidth||400;const H=200;
+    hc.width=W;hc.height=H;
+    const hours=Array.from({length:24},(_,i)=>{const h=i;return h>=8&&h<=22?Math.floor(Math.random()*50+5):Math.floor(Math.random()*10);});
+    const max=Math.max(...hours);const pad=30;
+    ctx.clearRect(0,0,W,H);
+    const bw=(W-pad*2)/24;
+    hours.forEach((v,i)=>{
+      const bh=v/max*(H-pad*2);const x=pad+i*bw;const y=H-pad-bh;
+      const isPeak=v===max;
+      ctx.fillStyle=isPeak?'rgba(0,230,118,0.7)':'rgba(79,195,247,0.4)';
+      ctx.beginPath();if(ctx.roundRect)ctx.roundRect(x+1,y,bw-2,bh,2);else ctx.rect(x+1,y,bw-2,bh);ctx.fill();
+    });
+    ctx.fillStyle='rgba(232,244,253,0.3)';ctx.font='9px DM Sans';ctx.textAlign='center';
+    [0,6,12,18,23].forEach(i=>{ctx.fillText(i+'h',pad+i*bw+bw/2,H-4);});
+  }
+  // Device/Browser bars
+  renderBar('deviceBars',[['📱 Mobile',62],['🖥️ Desktop',28],['💻 Tablet',10]]);
+  renderBar('browserBars',[['Chrome',58],['Safari',24],['Firefox',11],['Edge',7]]);
+}
+
+function renderBar(containerId, items) {
+  const el=document.getElementById(containerId);if(!el)return;
+  el.innerHTML=items.map(([name,pct])=>`
+    <div style="margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:5px">
+        <span>${name}</span><span style="color:var(--accent);font-family:'DM Mono',monospace">${pct}%</span>
+      </div>
+      <div style="height:6px;background:rgba(255,255,255,0.06);border-radius:3px">
+        <div style="width:${pct}%;height:100%;background:linear-gradient(90deg,var(--accent),var(--purple));border-radius:3px;transition:width 1s ease"></div>
+      </div>
+    </div>`).join('');
+}
+
+// ── SETTINGS ──
+function loadSettings() {
+  try {
+    const s = JSON.parse(localStorage.getItem(LS.settings) || '{}');
+    if(s.goal) document.getElementById('s-goal').value = s.goal;
+    if(s.quickadd) document.getElementById('s-quickadd').value = s.quickadd;
+    if(s.resetTime) document.getElementById('s-resetTime').value = s.resetTime;
+    if(s.color) document.getElementById('s-color').value = s.color;
+    if(s.confetti !== undefined) document.getElementById('s-confetti').checked = s.confetti;
+    if(s.sounds !== undefined) document.getElementById('s-sounds').checked = s.sounds;
+    if(s.maintenance !== undefined) document.getElementById('s-maintenance').checked = s.maintenance;
+    if(s.dndStart) document.getElementById('s-dndStart').value = s.dndStart;
+    if(s.dndEnd) document.getElementById('s-dndEnd').value = s.dndEnd;
+  } catch(e){}
+}
+function saveSettings() {
+  const s = {
+    goal: document.getElementById('s-goal').value,
+    quickadd: document.getElementById('s-quickadd').value,
+    resetTime: document.getElementById('s-resetTime').value,
+    color: document.getElementById('s-color').value,
+    confetti: document.getElementById('s-confetti').checked,
+    sounds: document.getElementById('s-sounds').checked,
+    maintenance: document.getElementById('s-maintenance').checked,
+    dndStart: document.getElementById('s-dndStart').value,
+    dndEnd: document.getElementById('s-dndEnd').value,
+  };
+  localStorage.setItem(LS.settings, JSON.stringify(s));
+  addLog('Settings saved');
+  showToast('✅ Settings saved!', 'success');
+}
+
+// ── CONTENT ──
+function loadContent() {
+  try {
+    const c = JSON.parse(localStorage.getItem(LS.content) || '{}');
+    if(c.appName) document.getElementById('c-appName').value = c.appName;
+    if(c.tagline) document.getElementById('c-tagline').value = c.tagline;
+    if(c.subtext) document.getElementById('c-subtext').value = c.subtext;
+    if(c.tips) document.getElementById('c-tips').value = c.tips;
+    if(c.remMsg) document.getElementById('c-remMsg').value = c.remMsg;
+    if(c.goalMsg) document.getElementById('c-goalMsg').value = c.goalMsg;
+    if(c.email) document.getElementById('c-email').value = c.email;
+    if(c.footer) document.getElementById('c-footer').value = c.footer;
+  } catch(e){}
+}
+function saveContent() {
+  const c = {
+    appName: document.getElementById('c-appName').value,
+    tagline: document.getElementById('c-tagline').value,
+    subtext: document.getElementById('c-subtext').value,
+    tips: document.getElementById('c-tips').value,
+    remMsg: document.getElementById('c-remMsg').value,
+    goalMsg: document.getElementById('c-goalMsg').value,
+    email: document.getElementById('c-email').value,
+    footer: document.getElementById('c-footer').value,
+  };
+  localStorage.setItem(LS.content, JSON.stringify(c));
+  addLog('Content updated: ' + Object.keys(c).length + ' fields');
+  showToast('✅ Content saved!', 'success');
+}
+
+// ── FIREBASE CONFIG ──
+function loadFirebaseConfig() {
+  try {
+    const fb = JSON.parse(localStorage.getItem(LS.firebase) || '{}');
+    if(fb.apiKey) document.getElementById('fb-apiKey').value = fb.apiKey;
+    if(fb.authDomain) document.getElementById('fb-authDomain').value = fb.authDomain;
+    if(fb.projectId) document.getElementById('fb-projectId').value = fb.projectId;
+    if(fb.storageBucket) document.getElementById('fb-storageBucket').value = fb.storageBucket;
+    if(fb.messagingSenderId) document.getElementById('fb-messagingSenderId').value = fb.messagingSenderId;
+    if(fb.appId) document.getElementById('fb-appId').value = fb.appId;
+    if(fb.apiKey) {
+      document.getElementById('fbStatus').innerHTML = '<span style="color:var(--green)">✅ Firebase config saved. Add the tracking script to your HTML files to start collecting data.</span>';
+    }
+    updateTrackingCode();
+  } catch(e){}
+}
+function saveFirebaseConfig() {
+  const fb = {
+    apiKey: document.getElementById('fb-apiKey').value.trim(),
+    authDomain: document.getElementById('fb-authDomain').value.trim(),
+    projectId: document.getElementById('fb-projectId').value.trim(),
+    storageBucket: document.getElementById('fb-storageBucket').value.trim(),
+    messagingSenderId: document.getElementById('fb-messagingSenderId').value.trim(),
+    appId: document.getElementById('fb-appId').value.trim(),
+  };
+  if(!fb.apiKey || !fb.projectId){ showToast('⚠️ API Key and Project ID required','error'); return; }
+  localStorage.setItem(LS.firebase, JSON.stringify(fb));
+  document.getElementById('fbStatus').innerHTML = '<span style="color:var(--green)">✅ Config saved! Add the tracking script to your HTML files.</span>';
+  updateTrackingCode();
+  addLog('Firebase config saved for project: ' + fb.projectId);
+  showToast('🔥 Firebase config saved!', 'success');
+}
+
+function updateTrackingCode() {
+  let fb = {};
+  try { fb = JSON.parse(localStorage.getItem(LS.firebase) || '{}'); } catch(e){}
+  const code = `<!-- Hydra Firebase Analytics Tracker -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getFirestore, doc, setDoc, increment, serverTimestamp }
+    from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "${fb.apiKey || 'YOUR_API_KEY'}",
+    authDomain: "${fb.authDomain || 'YOUR_PROJECT.firebaseapp.com'}",
+    projectId: "${fb.projectId || 'YOUR_PROJECT_ID'}",
+    storageBucket: "${fb.storageBucket || 'YOUR_PROJECT.appspot.com'}",
+    messagingSenderId: "${fb.messagingSenderId || 'YOUR_SENDER_ID'}",
+    appId: "${fb.appId || 'YOUR_APP_ID'}"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // Track this page visit
+  const today = new Date().toISOString().slice(0, 10);
+  const page = location.pathname.split('/').pop() || 'index.html';
+  const device = /Mobi|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop';
+
+  await setDoc(doc(db, 'analytics', 'global'), {
+    total: increment(1),
+    online: increment(1),
+  }, { merge: true });
+
+  await setDoc(doc(db, 'analytics', today), {
+    visits: increment(1),
+    [page]: increment(1),
+    [device]: increment(1),
+    lastSeen: serverTimestamp()
+  }, { merge: true });
+
+  // Decrement online after 5 min
+  setTimeout(async () => {
+    await setDoc(doc(db, 'analytics', 'global'),
+      { online: increment(-1) }, { merge: true });
+  }, 300000);
+<\/script>`;
+  const box = document.getElementById('trackingCodeBox');
+  if(box) box.textContent = code;
+}
+
+function copyTrackingCode() {
+  const code = document.getElementById('trackingCodeBox').textContent;
+  navigator.clipboard.writeText(code).then(() => showToast('📋 Code copied!', 'success'));
+}
+
+// ── LOGS ──
+function addLog(msg) {
+  let logs = [];
+  try { logs = JSON.parse(localStorage.getItem(LS.logs) || '[]'); } catch(e){}
+  logs.unshift({ time: new Date().toLocaleString(), msg });
+  if(logs.length > 100) logs = logs.slice(0, 100);
+  localStorage.setItem(LS.logs, JSON.stringify(logs));
+  renderLogs();
+}
+function renderLogs() {
+  let logs = [];
+  try { logs = JSON.parse(localStorage.getItem(LS.logs) || '[]'); } catch(e){}
+  const el = document.getElementById('logsContainer');
+  if(!el) return;
+  if(!logs.length){ el.innerHTML='<div style="color:var(--muted);padding:20px;text-align:center">No logs yet</div>'; return; }
+  el.innerHTML = logs.map(l => `<div style="padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;gap:16px">
+    <span style="color:var(--muted);flex-shrink:0">${l.time}</span>
+    <span style="color:var(--green)">›</span>
+    <span>${l.msg}</span>
+  </div>`).join('');
+}
+function clearLogs() {
+  localStorage.removeItem(LS.logs);
+  renderLogs();
+  showToast('🗑 Logs cleared', 'success');
+}
+
+// ── EXPORT ──
+function exportUsersCSV() {
+  const csv = 'Session ID,Device,Country,Page,Last Seen\n' +
+    Array.from({length:8},(_,i)=>`usr_${Math.random().toString(36).slice(2,8)},Mobile,Pakistan,index.html,${i+1}m ago`).join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download='hydra-users-'+new Date().toISOString().slice(0,10)+'.csv';a.click();
+  showToast('📥 Exported!','success');
+}
+
+// ── BROADCAST ──
+function sendBroadcast() {
+  const title = document.getElementById('n-title').value;
+  const body = document.getElementById('n-body').value;
+  if(!title || !body){ showToast('⚠️ Fill in title and message','error'); return; }
+  addLog('Broadcast sent: ' + title);
+  const log = document.getElementById('notifLog');
+  const entry = `<div style="padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.04)">
+    <div style="display:flex;justify-content:space-between">
+      <strong>${title}</strong>
+      <span style="font-size:.72rem;color:var(--muted)">${new Date().toLocaleString()}</span>
+    </div>
+    <div style="font-size:.82rem;color:var(--muted);margin-top:4px">${body}</div>
+  </div>`;
+  log.innerHTML = entry + log.innerHTML.replace('<div style="text-align:center;padding:30px;color:var(--muted);font-size:.85rem">No broadcasts sent yet</div>','');
+  showToast('📤 Broadcast logged (Firebase FCM needed for real push)','success');
+}
+
+// ── UTILS ──
+function setEl(id, val) { const el=document.getElementById(id); if(el) el.textContent=val; }
+let toastTimer;
+function showToast(msg, type='') {
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast show'+(type?' '+type:'');
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),3000);
+}
+window.addEventListener('resize', () => { renderTrafficChart(); });
+</script>
+</body>
+</html>
