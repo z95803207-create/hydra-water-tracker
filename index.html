@@ -580,5 +580,46 @@ setInterval(checkRems,10000);setInterval(updateCountdown,30000);updateCountdown(
 window.addEventListener('resize',drawChart);
 setTimeout(updateNotifStatus,500);
 </script>
+  <!-- Hydra Firebase Analytics Tracker -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getFirestore, doc, setDoc, increment, serverTimestamp }
+    from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAERo-_aNCtrsn-Et20M3af3sdYsACQ48A",
+    authDomain: "watertracker-36c42.firebaseapp.com",
+    projectId: "watertracker-36c42",
+    storageBucket: "watertracker-36c42.firebasestorage.app",
+    messagingSenderId: "126348121182",
+    appId: "1:126348121182:web:3a846cfa775358d03290cf"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // Track this page visit
+  const today = new Date().toISOString().slice(0, 10);
+  const page = location.pathname.split('/').pop() || 'index.html';
+  const device = /Mobi|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop';
+
+  await setDoc(doc(db, 'analytics', 'global'), {
+    total: increment(1),
+    online: increment(1),
+  }, { merge: true });
+
+  await setDoc(doc(db, 'analytics', today), {
+    visits: increment(1),
+    [page]: increment(1),
+    [device]: increment(1),
+    lastSeen: serverTimestamp()
+  }, { merge: true });
+
+  // Decrement online after 5 min
+  setTimeout(async () => {
+    await setDoc(doc(db, 'analytics', 'global'),
+      { online: increment(-1) }, { merge: true });
+  }, 300000);
+</script>
 </body>
 </html>
