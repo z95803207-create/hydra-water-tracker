@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JZJH4R1RG3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-JZJH4R1RG3');
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>FAQ – Hydra Water Tracker</title>
@@ -215,31 +224,6 @@ function faqFilter(cat,el){document.querySelectorAll('.cat').forEach(c=>c.classL
 function faqSearch(val){const q=val.toLowerCase().trim();let found=0;document.querySelectorAll('.cat').forEach(c=>c.classList.toggle('active',c.textContent.trim()==='All'));document.querySelectorAll('.faq-item').forEach(item=>{const match=!q||item.textContent.toLowerCase().includes(q);item.style.display=match?'':'none';if(match)found++;if(q&&match)item.classList.add('open');else if(q&&!match)item.classList.remove('open')});document.querySelectorAll('.sec-title').forEach(t=>t.style.display=q?'none':'');document.getElementById('no-results').style.display=(!q||found>0)?'none':'block'}
 const io=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target)}})},{threshold:.1});
 document.querySelectorAll('.faq-item,.sec-title,.stat').forEach((el,i)=>{el.style.transitionDelay=(i*.03)+'s';io.observe(el)});
-</script>
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, increment, update }
-  from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-const app = initializeApp({
-  apiKey:"AIzaSyAERo-_aNCtrsn-Et20M3af3sdYsACQ48A",
-  databaseURL:"https://watertracker-36c42-default-rtdb.firebaseio.com",
-  projectId:"watertracker-36c42",
-  appId:"1:126348121182:web:3a846cfa775358d03290cf"
-});
-const db = getDatabase(app);
-const today = new Date().toISOString().slice(0,10);
-const rawPage = location.pathname.split('/').pop() || 'index';
-const page = rawPage.replace('.html','') || 'index';
-const device = /Mobi|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop';
-update(ref(db,'analytics/global'), {total:increment(1), online:increment(1)});
-update(ref(db,`analytics/days/${today}`), {
-  visits: increment(1),
-  [page]: increment(1),
-  [device]: increment(1)
-});
-const sid = 's' + Math.random().toString(36).slice(2,9);
-update(ref(db,`sessions/${sid}`), {device, page, lastSeen:Date.now()});
-setTimeout(()=>update(ref(db,'analytics/global'),{online:increment(-1)}),300000);
 </script>
 <script src="https://pl28884077.effectivegatecpm.com/51/ac/22/51ac22251678e51462e9fa52adb7ac1d.js"></script><script src="https://pl28924333.effectivegatecpm.com/f9/93/3a/f9933ae648db83f48f91fa5b7bddb051.js"></script></body>
 </html>
